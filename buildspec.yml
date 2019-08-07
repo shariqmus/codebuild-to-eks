@@ -1,0 +1,19 @@
+version: 0.2
+phases:
+  install:
+    commands:
+      # Install kubectl
+      - curl -o kubectl https://amazon-eks.s3-us-west-2.amazonaws.com/1.11.10/2019-06-21/bin/linux/amd64/kubectl
+      - chmod +x ./kubectl
+      - mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$HOME/bin:$PATH
+      - kubectl version --short --client
+      # Install Iam Authenticator
+      - curl -o aws-iam-authenticator https://amazon-eks.s3-us-west-2.amazonaws.com/1.13.7/2019-06-11/bin/linux/amd64/aws-iam-authenticator
+      - chmod +x ./aws-iam-authenticator
+      - mkdir -p $HOME/bin && cp ./aws-iam-authenticator $HOME/bin/aws-iam-authenticator && export PATH=$HOME/bin:$PATH
+      - aws-iam-authenticator help
+      # Configure kubectl
+      - aws eks --region us-east-1 update-kubeconfig --name devel
+  build:
+    commands:
+      - kubectl apply -f deployment
